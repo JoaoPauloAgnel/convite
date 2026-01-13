@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Um Convite Especial v3.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@1,500&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS Base --- */
+        :root {
+            --cor-fundo-1: #ffe4e9; /* Rosa claro */
+            --cor-fundo-2: #fdf2f4; /* Quase branco rosado */
+            --cor-fundo-3: #fac3ce; /* Rosa um pouco mais intenso para o degradê */
+            --cor-destaque: #a12f3f; /* Vermelho bordô elegante */
+            --cor-texto: #4a4a4a;
+            --cor-brilho: rgba(161, 47, 63, 0.6);
+        }
+
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Montserrat', sans-serif;
+            /* ESTADO INICIAL: Gradiente rosa animado */
+            background: linear-gradient(-45deg, var(--cor-fundo-1), var(--cor-fundo-2), var(--cor-fundo-3), var(--cor-fundo-1));
+            background-size: 400% 400%;
+            animation: gradientBG 18s ease infinite;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--cor-texto);
+            overflow: hidden;
+            position: relative; /* Necessário para o overlay da foto funcionar */
+        }
+
+        /* --- ESTADO DE ACEITAÇÃO (Mudança de Fundo) --- */
+        /* Esta classe é adicionada pelo Javascript quando clica em SIM */
+        body.body-aceitou {
+            animation: none; /* Para a animação do gradiente */
+            /* ATENÇÃO: TROQUE O LINK ABAIXO PELA SUA FOTO SE QUISER 
+               Pode ser um link do Google Photos, Imgur, etc., desde que termine em .jpg ou .png
+            */
+            background-image: url('https://images.unsplash.com/photo-1516919549054-e082571b96f9?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3');
+            background-size: cover; /* Cobre toda a tela */
+            background-position: center; /* Centraliza a foto */
+            background-repeat: no-repeat;
+            transition: background-image 0.5s ease-in-out; /* Transição suave */
+        }
+
+        /* Cria uma camada escura sobre a foto para o texto ficar legível */
+        body.body-aceitou::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5); /* Escurece a foto em 50% */
+            z-index: -1; /* Fica atrás do cartão, na frente da foto */
+            animation: fadeInOverlay 1s ease forwards;
+        }
+
+        @keyframes fadeInOverlay {
+            from { opacity: 0; } to { opacity: 1; }
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- O Cartão Central (Glassmorphism) --- */
+        .card-convite {
+            background: rgba(255, 255, 255, 0.8); /* Um pouco mais opaco para garantir leitura */
+            padding: 45px 40px;
+            border-radius: 24px;
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2); /* Sombra um pouco mais forte para destacar da foto */
+            text-align: center;
+            max-width: 500px;
+            width: 85%;
+            position: relative;
+            overflow: hidden;
+            z-index: 10; /* Garante que o cartão fique na frente de tudo */
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--cor-destaque);
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            letter-spacing: -0.5px;
+        }
+
+        .texto-convite {
+            font-size: 1.1rem;
+            line-height: 1.7;
+            margin-bottom: 35px;
+            color: #555;
+        }
+
+        .destaque-vinho {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-weight: 500;
+            color: var(--cor-destaque);
+            display: block;
+            margin-top: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* Container dos botões */
+        .botoes-container {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        /* Estilo dos botões */
+        .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        .btn-sim {
+            background-color: var(--cor-destaque);
+            color: white;
+            box-shadow: 0 4px 15px rgba(161, 47, 63, 0.4);
+        }
+
+        .btn-sim:hover {
+            box-shadow: 0 8px 25px var(--cor-brilho);
+            transform: scale(1.05);
+        }
+
+        .btn-nao {
+            background-color: transparent;
+            color: var(--cor-destaque);
+            border: 2px solid currentColor;
+            opacity: 0.8;
+        }
+
+        .btn-nao:hover {
+            background-color: rgba(161, 47, 63, 0.05);
+            opacity: 1;
+            transform: scale(1.05);
+        }
+
+        /* Rodapé */
+        .footer {
+            margin-top: 45px;
+            font-size: 0.85rem;
+            color: rgba(161, 47, 63, 0.7);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-top: 1px solid rgba(161, 47, 63, 0.1);
+            padding-top: 25px;
+        }
+
+        /* --- Estados de Resposta --- */
+        #area-resposta, #area-negacao {
+            display: none;
+        }
+        
+        .titulo-resposta {
+            color: var(--cor-destaque);
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card-convite::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--cor-destaque);
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            opacity: 0.5;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="card-convite fade-in-up">
+        
+        <div id="area-convite">
+            <h1>Vamos tentar de novo?</h1>
+            
+            <p class="texto-convite">
+                Topa revivermos nosso primeiro encontro? <br>
+                Versão 2.0: saca-rolhas na mão, taças a postos e zero perrengue.
+                <span class="destaque-vinho">
+                    🍷 O vinho (e talvez um chocolate 🍫) já estão nos esperando.
+                </span>
+            </p>
+
+            <div class="botoes-container">
+                <button class="btn btn-nao" onclick="negarConvite()">Talvez depois...</button>
+                <button class="btn btn-sim" onclick="aceitarConvite()">Com certeza! 💖</button>
+            </div>
+        </div>
+
+        <div id="area-resposta">
+            <h2 class="titulo-resposta">Sabia que você faria a melhor escolha! ✨</h2>
+            <p class="texto-convite">
+                Prepare-se, porque dessa vez vai ser impecável.<br>
+                Já pode ir separando a playlist. 😎
+            </p>
+        </div>
+
+         <div id="area-negacao">
+            <h2 style="color: #666; font-family: 'Montserrat', sans-serif;">Ah, tudo bem...</h2>
+            <p class="texto-convite">
+                Sem pressão! O vinho (e eu) somos pacientes. <br>
+                Fica para uma próxima oportunidade. 😊
+            </p>
+        </div>
+
+        <div class="footer">
+            De: João &nbsp; ✦ &nbsp; Para: Lucy
+        </div>
+
+    </div>
+
+
+    <script>
+        // Função auxiliar para trocar o conteúdo do cartão
+        function trocarConteudo(idParaMostrar) {
+            const card = document.querySelector('.card-convite');
+            const convite = document.getElementById('area-convite');
+            const resposta = document.getElementById('area-resposta');
+            const negacao = document.getElementById('area-negacao');
+
+            card.classList.remove('fade-in-up');
+            convite.style.display = 'none';
+            resposta.style.display = 'none';
+            negacao.style.display = 'none';
+
+            const elementoAlvo = document.getElementById(idParaMostrar);
+            elementoAlvo.style.display = 'block';
+            void elementoAlvo.offsetWidth; 
+            elementoAlvo.classList.add('fade-in-up');
+        }
+
+        function aceitarConvite() {
+            trocarConteudo('area-resposta');
+            // AQUI ESTÁ A MÁGICA: Adiciona a classe que muda o fundo do site inteiro
+            document.body.classList.add('body-aceitou');
+        }
+
+        function negarConvite() {
+            trocarConteudo('area-negacao');
+            // Se negar, garante que o fundo continue rosa (caso tenha clicado em sim antes e voltado)
+            document.body.classList.remove('body-aceitou');
+        }
+    </script>
+
+</body>
+</html>
